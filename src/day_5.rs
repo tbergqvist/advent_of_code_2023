@@ -1,0 +1,96 @@
+use itertools::Itertools;
+
+struct GroupLine {
+	des_start: usize,
+	source_start: usize,
+	length: usize,
+}
+
+pub fn a(input: &str) -> usize {
+	let mut iter = input.split("\r\n\r\n");
+	let seeds = iter.next();
+	let converters = iter.map(|group| {
+		group
+			.split("\r\n")
+			.filter_map(|line| {
+				let nums = line.split(" ")
+				.filter_map(|item| item.parse().ok())
+				.collect_vec();
+
+				if nums.is_empty() {
+					return None;
+				}
+				
+				Some(GroupLine {
+					des_start: nums[0],
+					source_start: nums[1],
+					length: nums[2],
+				})
+			}
+			)
+			.collect_vec()
+	}).collect_vec();
+
+	seeds.unwrap()
+		.split(" ")
+		.filter_map(|line| line.parse::<usize>().ok())
+		.map(|seed| converters.iter().fold(seed, |current_pos, group| {
+			let item = group.iter()
+				.find(|g| current_pos >= g.source_start && current_pos < g.source_start + g.length)
+				.map(|g| current_pos + g.des_start - g.source_start);
+			item.unwrap_or(current_pos)
+		}))
+		.min()
+		.unwrap()
+}
+
+pub fn b(input: &str) -> usize {
+	let mut iter = input.split("\r\n\r\n");
+	let seeds_line = iter.next().unwrap();
+	let mut converters = iter.map(|group| {
+		group
+			.split("\r\n")
+			.filter_map(|line| {
+				let nums = line.split(" ")
+				.filter_map(|item| item.parse().ok())
+				.collect_vec();
+
+				if nums.is_empty() {
+					return None;
+				}
+				
+				Some(GroupLine {
+					des_start: nums[0],
+					source_start: nums[1],
+					length: nums[2],
+				})
+			}
+			)
+			.collect_vec()
+	}).collect_vec();
+
+	converters.reverse();
+	let seeds: Vec<(usize, usize)> = seeds_line[7..]
+		.split(" ")
+		.filter_map(|line| line.parse::<usize>().ok())
+		.chunks(2)
+		.into_iter()
+		.map(|chunk| chunk.collect_tuple())
+		.filter_map(|o|o)
+		.collect_vec();
+
+		for i in 0.. {
+			let num = converters.iter().fold(i, |current_pos, group| {
+				let item = group.iter()
+					.find(|g| current_pos >= g.des_start && current_pos < g.des_start + g.length)
+					.map(|g| current_pos + g.source_start - g.des_start);
+				item.unwrap_or(current_pos)
+			});
+
+			if seeds.iter().any(|seed| num >= seed.0 && num <= (seed.0 + seed.1)) {
+				return i;
+			}
+		};
+
+		0
+}
