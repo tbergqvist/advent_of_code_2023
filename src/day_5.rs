@@ -16,7 +16,6 @@ pub fn a(input: &str) -> usize {
 				let nums = line.split(" ")
 				.filter_map(|item| item.parse().ok())
 				.collect_vec();
-
 				if nums.is_empty() {
 					return None;
 				}
@@ -30,7 +29,6 @@ pub fn a(input: &str) -> usize {
 			)
 			.collect_vec()
 	}).collect_vec();
-
 	seeds.unwrap()
 		.split(" ")
 		.filter_map(|line| line.parse::<usize>().ok())
@@ -79,18 +77,19 @@ pub fn b(input: &str) -> usize {
 		.filter_map(|o|o)
 		.collect_vec();
 
-		for i in 0.. {
-			let num = converters.iter().fold(i, |current_pos, group| {
-				let item = group.iter()
-					.find(|g| current_pos >= g.des_start && current_pos < g.des_start + g.length)
-					.map(|g| current_pos + g.source_start - g.des_start);
-				item.unwrap_or(current_pos)
-			});
+	let min_length = converters.iter().flat_map(|c| c).map(|c|c.length).min().unwrap();
+	let mut i = 0;
+	loop {
+		i += min_length;
+		let (pos, min_diff) = converters.iter().fold((i, i), |(current_pos, min), group| {
+			group.iter()
+				.find(|g| current_pos >= g.des_start && current_pos < g.des_start + g.length)
+				.map(|g| (current_pos + g.source_start - g.des_start, min.min(current_pos - g.des_start)))
+				.unwrap_or((current_pos, min))
+		});
 
-			if seeds.iter().any(|seed| num >= seed.0 && num <= (seed.0 + seed.1)) {
-				return i;
-			}
-		};
-
-		0
+		if seeds.iter().any(|(seed_pos, seed_length)| pos >= *seed_pos && pos <= (seed_pos + seed_length)) {
+			return i - min_diff;
+		}
+	};
 }
