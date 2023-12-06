@@ -78,9 +78,7 @@ pub fn b(input: &str) -> usize {
 		.collect_vec();
 
 	let min_length = converters.iter().flat_map(|c| c).map(|c|c.length).min().unwrap();
-	let mut i = 0;
-	loop {
-		i += min_length;
+	for i in (0..).step_by(min_length) {
 		let (pos, min_diff) = converters.iter().fold((i, i), |(current_pos, min), group| {
 			group.iter()
 				.find(|g| current_pos >= g.des_start && current_pos < g.des_start + g.length)
@@ -92,4 +90,5 @@ pub fn b(input: &str) -> usize {
 			return i - min_diff;
 		}
 	};
+	0
 }
