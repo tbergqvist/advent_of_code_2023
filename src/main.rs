@@ -1,12 +1,7 @@
 use std::fs;
 use paste::paste;
+use advent_of_code_2023::*;
 
-mod day_1;
-mod day_2;
-mod day_3;
-mod day_4;
-mod day_5;
-mod day_6;
 
 macro_rules! run_days {
 	( $( $x:expr), + ) => {
