@@ -1,6 +1,6 @@
-use std::{vec, collections::HashSet};
+use std::vec;
 
-use itertools::{Itertools, enumerate};
+use itertools::Itertools;
 
 fn get_next_step(steps: (i32, i32), c: u8) -> (i32, i32) {
 	match (steps, c) {
