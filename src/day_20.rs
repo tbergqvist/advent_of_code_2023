@@ -120,8 +120,6 @@ pub fn a(input: &str) -> i64 {
 		}
 	}
 
-	println!("low: {}, high: {}", sum_low, sum_high);
-
 	sum_high * sum_low
 }
 
